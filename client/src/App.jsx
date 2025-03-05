@@ -17,7 +17,7 @@ function App() {
       setLoading(true);
       setError("");
       const eventResponse = await fetch(
-        "http://localhost:5000/api/generate-event",
+        "https://timetraveller-social-media.onrender.com/api/generate-event",
         {
           method: "POST",
           headers: {
@@ -39,7 +39,7 @@ function App() {
       setEvent(eventData.data);
 
       const postsResponse = await fetch(
-        "http://localhost:5000/api/generate-posts",
+        "https://timetraveller-social-media.onrender.com/api/generate-posts",
         {
           method: "POST",
           headers: {
