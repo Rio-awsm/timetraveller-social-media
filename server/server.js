@@ -16,14 +16,10 @@ const getGeminiModel = () => {
 };
 
 const extractJsonFromText = (text) => {
-  // First try direct JSON parsing
   try {
     return JSON.parse(text);
   } catch (e) {
-    // If direct parsing fails, try various cleanup methods
     let cleanedText = text;
-    
-    // 1. Remove markdown code blocks of any language
     const codeBlockRegex = /```(?:\w+)?\s*([\s\S]*?)```/g;
     const codeBlockMatch = codeBlockRegex.exec(cleanedText);
     if (codeBlockMatch && codeBlockMatch[1]) {
@@ -31,11 +27,8 @@ const extractJsonFromText = (text) => {
       try {
         return JSON.parse(cleanedText);
       } catch (e) {
-        // Continue with other cleanup methods
       }
     }
-    
-    // 2. Find the first occurrence of '{' and the last occurrence of '}'
     const firstBrace = cleanedText.indexOf('{');
     const lastBrace = cleanedText.lastIndexOf('}');
     
@@ -44,11 +37,8 @@ const extractJsonFromText = (text) => {
       try {
         return JSON.parse(jsonSubstring);
       } catch (e) {
-        // Continue with other cleanup methods
       }
     }
-    
-    // 3. Find the first occurrence of '[' and the last occurrence of ']' for arrays
     const firstBracket = cleanedText.indexOf('[');
     const lastBracket = cleanedText.lastIndexOf(']');
     
@@ -57,29 +47,20 @@ const extractJsonFromText = (text) => {
       try {
         return JSON.parse(jsonSubstring);
       } catch (e) {
-        // Continue with other cleanup methods
       }
     }
-    
-    // 4. Fix common JSON syntax errors
-    
-    // 4.1 Replace single quotes with double quotes
+  
     let fixedText = cleanedText.replace(/'/g, '"');
-    
-    // 4.2 Ensure property names are double-quoted
     fixedText = fixedText.replace(/(\w+):/g, '"$1":');
     
-    // 4.3 Fix unescaped quotes inside values
     fixedText = fixedText.replace(/:\s*"([^"]*?)\\?"([^"]*?)"/g, ': "$1\\"$2"');
     
-    // 4.4 Fix trailing commas in objects and arrays
     fixedText = fixedText.replace(/,\s*}/g, '}').replace(/,\s*\]/g, ']');
     
-    // Try parsing the fixed text
+ 
     try {
       return JSON.parse(fixedText);
     } catch (e) {
-      // If all above fails, try to find any JSON-like structure
       const jsonPattern = /(\{[\s\S]*?\}|\[[\s\S]*?\])/g;
       const matches = Array.from(cleanedText.matchAll(jsonPattern));
       
@@ -87,63 +68,59 @@ const extractJsonFromText = (text) => {
         try {
           return JSON.parse(match[0]);
         } catch (e) {
-          // Try next match
         }
       }
       
-      // If all else fails, attempt to create a valid JSON structure
       try {
-        // For objects
+        
         if (cleanedText.includes('{') && cleanedText.includes('}')) {
           const objectRegex = /\{[\s\S]*\}/;
           const objectMatch = cleanedText.match(objectRegex);
           if (objectMatch) {
-            // Convert to valid JSON by fixing common issues
+            
             let potentialJson = objectMatch[0]
-              .replace(/(\w+)(?=:)/g, '"$1"') // Quote unquoted keys
-              .replace(/:\s*'([^']*)'/g, ': "$1"') // Replace single-quoted values with double quotes
-              .replace(/,\s*}/g, '}') // Remove trailing commas
-              .replace(/\\/g, '\\\\') // Escape backslashes
-              .replace(/(?<!\\)"/g, '\\"') // Escape unescaped double quotes
-              .replace(/\\\\"/g, '\\"') // Fix double escaping
-              .replace(/^/, '"text":') // Add a key for plain text
-              .replace(/^"text":/, '{"text":') // Ensure it starts with an object
-              .replace(/$/g, '}'); // Ensure it ends properly
+              .replace(/(\w+)(?=:)/g, '"$1"')
+              .replace(/:\s*'([^']*)'/g, ': "$1"')
+              .replace(/,\s*}/g, '}')
+              .replace(/\\/g, '\\\\')
+              .replace(/(?<!\\)"/g, '\\"')
+              .replace(/\\\\"/g, '\\"')
+              .replace(/^/, '"text":')
+              .replace(/^"text":/, '{"text":')
+              .replace(/$/g, '}');
             
             try {
               return JSON.parse(potentialJson);
             } catch (e) {
-              // Last resort: return a fallback JSON
+              
               return { 
                 error: "Could not parse JSON", 
-                originalText: text.substring(0, 1000) // Include part of the original text
+                originalText: text.substring(0, 1000) 
               };
             }
           }
         }
         
-        // For arrays
         if (cleanedText.includes('[') && cleanedText.includes(']')) {
           const arrayRegex = /\[[\s\S]*\]/;
           const arrayMatch = cleanedText.match(arrayRegex);
           if (arrayMatch) {
-            // Similar fixes for arrays
+           
             let potentialJson = arrayMatch[0]
-              .replace(/'/g, '"') // Replace single quotes
-              .replace(/,\s*\]/g, ']'); // Remove trailing commas
+              .replace(/'/g, '"') 
+              .replace(/,\s*\]/g, ']'); 
             
             try {
               return JSON.parse(potentialJson);
             } catch (e) {
-              // Continue to fallback
+              
             }
           }
         }
       } catch (e) {
-        // Continue to fallback
+        
       }
       
-      // Ultimate fallback
       return { 
         parsingError: true,
         message: "Could not extract valid JSON",
