@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { personalities, prebuiltTimePeriods, platforms, tones } from '../Constants';
 
 const ControlPanel = ({ onGenerate }) => {
   const [period, setPeriod] = useState('');
@@ -7,41 +8,10 @@ const ControlPanel = ({ onGenerate }) => {
   const [tone, setTone] = useState('humorous');
   const [customPeriod, setCustomPeriod] = useState(true);
   
-  const prebuiltTimePeriods = [
-    { id: 'ancient', label: 'Ancient World (3000 BCE - 500 CE)', value: 'Ancient World (3000 BCE - 500 CE)' },
-    { id: 'medieval', label: 'Medieval Era (500 - 1500)', value: 'Medieval Era (500 - 1500)' },
-    { id: 'renaissance', label: 'Renaissance (1400 - 1600)', value: 'Renaissance (1400 - 1600)' },
-    { id: 'industrial', label: 'Industrial Revolution (1760 - 1840)', value: 'Industrial Revolution (1760 - 1840)' },
-    { id: 'victorian', label: 'Victorian Era (1837 - 1901)', value: 'Victorian Era (1837 - 1901)' },
-    { id: 'ww2', label: 'World War II (1939 - 1945)', value: 'World War II (1939 - 1945)' },
-    { id: 'coldwar', label: 'Cold War (1947 - 1991)', value: 'Cold War (1947 - 1991)' },
-    { id: 'space', label: 'Space Age (1957 - Present)', value: 'Space Age (1957 - Present)' },
-    { id: 'digital', label: 'Digital Revolution (1990 - 2010)', value: 'Digital Revolution (1990 - 2010)' },
-    { id: 'near-future', label: 'Near Future (2025 - 2050)', value: 'Near Future (2025 - 2050)' },
-    { id: 'ai-age', label: 'AI & Automation Age (2050 - 2080)', value: 'AI & Automation Age (2050 - 2080)' },
-    { id: 'interstellar', label: 'Interstellar Expansion (2080 - 2150)', value: 'Interstellar Expansion (2080 - 2150)' },
-    { id: 'posthuman', label: 'Post-Human Era (2150 - 2300)', value: 'Post-Human Era (2150 - 2300)' },
-    { id: 'galactic', label: 'Galactic Civilizations (2300 - 3000)', value: 'Galactic Civilizations (2300 - 3000)' }
-];
-
-  
-  const personalities = [
-    { id: 'politician', label: '🏛 Politician', default: true },
-    { id: 'conspiracy', label: '🏴‍☠️ Conspiracy Theorist', default: true },
-    { id: 'comedian', label: '🤡 Comedian', default: true },
-    { id: 'average', label: '👨‍👩‍👧‍👦 Average Citizen', default: true },
-    { id: 'scholar', label: '🎓 Scholar', default: false },
-    { id: 'celebrity', label: '⭐ Celebrity', default: false },
-    { id: 'journalist', label: '📰 Journalist', default: false },
-    { id: 'religious', label: '✝️ Religious Leader', default: false }
-  ];
   
   const [selectedPersonalities, setSelectedPersonalities] = useState(
     personalities.filter(p => p.default).map(p => p.label)
   );
-  
-  const platforms = ['Twitter', 'Reddit', 'Facebook', 'Instagram', 'TikTok'];
-  const tones = ['humorous', 'satirical', 'serious', 'dramatic', 'educational'];
   
   const handlePersonalityToggle = (personality) => {
     if (selectedPersonalities.includes(personality)) {
