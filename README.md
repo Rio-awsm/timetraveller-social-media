@@ -1,4 +1,3 @@
-```markdown
 # 🌐 TimeTraveller Social Media
 
 A modern frontend project visualizing and interacting with time-based social media trends, providing a user-friendly interface to explore social media throughout history.
@@ -218,4 +217,3 @@ This application is compatible with modern web browsers:
 - Firefox (latest version)
 - Safari (latest version)
 - Edge (latest version)
-```
